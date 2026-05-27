@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/hero.jpg" alt="Beyond Single Object — multi-object point-cloud scene" width="420">
+
 # Beyond Single Object: Learning 3D Relations with Large Language Models
 
 <p align="center">
@@ -15,8 +17,6 @@
 <sup>1</sup>AIST &nbsp;&nbsp; <sup>2</sup>University of Tsukuba &nbsp;&nbsp; <sup>3</sup>Fundamental AI Lab, UTN &nbsp;&nbsp; <sup>4</sup>Visual Geometry Group, University of Oxford
 
 **CVPR 2026 Findings**
-
-<img src="assets/hero.jpg" alt="Beyond Single Object — multi-object point-cloud scene" width="100%">
 
 <img src="assets/teaser.png" alt="Existing 3D-LLMs and 2D VLMs fail at detailed multi-object comparison; Multi-3DLLM reasons about geometry across objects" width="100%">
 
