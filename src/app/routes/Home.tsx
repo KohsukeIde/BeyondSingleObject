@@ -99,10 +99,9 @@ function Home() {
     <main className="container mx-auto px-6 py-8 space-y-20 xl:max-w-4xl">
       {/* Hero Section */}
       <section
-        className="relative text-center flex flex-col rounded-xl sm:rounded-3xl overflow-hidden w-full"
+        className="relative text-center flex flex-col justify-between gap-8 rounded-xl sm:rounded-3xl overflow-hidden w-full"
         style={{
-          aspectRatio: "1536 / 1024",
-          minHeight: "min(400px, 50vh)",
+          minHeight: "min(440px, 70vh)",
         }}
       >
         {/* Background montage of point-cloud objects */}
@@ -125,18 +124,17 @@ function Home() {
           }}
         />
 
-        <div className="relative z-10 flex flex-col h-full justify-between py-6 sm:py-8">
-          {/* CVPR 2026 badge */}
-          <div className="flex justify-center px-4">
-            <img
-              src={`${BASE}figures/cvpr-logo-white.png`}
-              alt="CVPR 2026 — Denver, Colorado, June 3–7"
-              className="h-9 w-auto opacity-95 sm:h-12"
-            />
-          </div>
+        {/* CVPR 2026 badge (top) */}
+        <div className="relative z-10 flex justify-center px-4 pt-6 sm:pt-8">
+          <img
+            src={`${BASE}figures/cvpr-logo-white.png`}
+            alt="CVPR 2026 — Denver, Colorado, June 3–7"
+            className="h-9 w-auto opacity-95 sm:h-12"
+          />
+        </div>
 
-          {/* Content anchored to bottom */}
-          <div className="space-y-3 flex-shrink-0 mt-auto">
+        {/* Content anchored to bottom */}
+        <div className="relative z-10 space-y-3 pb-6 sm:pb-8">
             <p className="text-lg text-white sm:text-xl md:text-2xl lg:text-3xl tracking-tight font-semibold px-4">
               {projectData.title}
             </p>
@@ -223,7 +221,6 @@ function Home() {
               </Button>
             </div>
           </div>
-        </div>
       </section>
 
       {/* Teaser */}
