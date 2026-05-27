@@ -10,11 +10,15 @@
   <a href="#-license"><img src="https://img.shields.io/badge/License-Apache%202.0-blue?style=flat" alt="License"></a>
 </p>
 
-[Kohsuke Ide](https://kohsukeide.github.io/), [Ryousuke Yamada](https://ryosuke-yamada.github.io/), [Yue Qiu](https://qiuyue1993.github.io/qiuyue.github.com/), [Xianzheng Ma](https://xianzhengma.github.io/), [Yoshihiro Fukuhara](https://gatheluck.net/), [Hirokatsu Kataoka](https://hirokatsukataoka.net/), [Yutaka Satoh](https://satoh-yutaka.github.io/)
+[Kohsuke Ide](https://kohsukeide.github.io/)<sup>1,2</sup>, [Ryousuke Yamada](https://ryosuke-yamada.github.io/)<sup>1,3</sup>, [Yue Qiu](https://qiuyue1993.github.io/qiuyue.github.com/)<sup>1</sup>, [Xianzheng Ma](https://xianzhengma.github.io/)<sup>4</sup>, [Yoshihiro Fukuhara](https://gatheluck.net/)<sup>1</sup>, [Hirokatsu Kataoka](https://hirokatsukataoka.net/)<sup>1,4</sup>, [Yutaka Satoh](https://satoh-yutaka.github.io/)<sup>1,2</sup>
+
+<sup>1</sup>AIST &nbsp;&nbsp; <sup>2</sup>University of Tsukuba &nbsp;&nbsp; <sup>3</sup>Fundamental AI Lab, UTN &nbsp;&nbsp; <sup>4</sup>Visual Geometry Group, University of Oxford
 
 **CVPR 2026 Findings**
 
-<img src="assets/teaser.png" alt="Beyond Single Object teaser">
+<img src="assets/hero.jpg" alt="Beyond Single Object — multi-object point-cloud scene" width="100%">
+
+<img src="assets/teaser.png" alt="Existing 3D-LLMs and 2D VLMs fail at detailed multi-object comparison; Multi-3DLLM reasons about geometry across objects" width="100%">
 
 </div>
 
