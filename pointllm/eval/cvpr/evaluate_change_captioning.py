@@ -706,10 +706,6 @@ def save_metrics_only_to_json(results, output_file):
 # ============================================================================
 
 async def main():
-    if not API_KEY:
-        print("Error: OPENAI_API_KEY environment variable not set")
-        return
-    
     # Argument parser
     parser = argparse.ArgumentParser(description="Change Captioning Evaluation Script")
     parser.add_argument("input_file", help="Path to the input JSON file")
@@ -721,6 +717,9 @@ async def main():
     parser.add_argument("--annotation", type=str, default=None, help="Path to annotation file with why_ref for reasoning evaluation")
     
     args = parser.parse_args()
+    if not API_KEY:
+        print("Error: OPENAI_API_KEY environment variable not set")
+        return
     quiet_mode = args.quiet
     
     # Resolve input file path
@@ -753,6 +752,8 @@ async def main():
         
         os.makedirs(output_dir, exist_ok=True)
         args.output = os.path.join(output_dir, f"{base_name}_llm_eval.json")
+    else:
+        os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     
     # Load data
     with open(input_file, 'r', encoding='utf-8') as f:

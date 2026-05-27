@@ -779,10 +779,6 @@ def save_metrics_only_to_json(results, overall_stats, output_file):
     return metrics_results
 
 async def main():
-    if not API_KEY:
-        print("Error: OPENAI_API_KEY environment variable not set")
-        return
-    
     # 引数パーサーの設定
     parser = argparse.ArgumentParser(description="3D-QA Multi-Perspective Evaluation Script")
     parser.add_argument("input_file", help="Path to the input JSON file")
@@ -796,6 +792,9 @@ async def main():
     parser.add_argument("--max_images", type=int, default=4, help="Maximum number of images to attach per sample (default: 4, matching data generation)")
     
     args = parser.parse_args()
+    if not API_KEY:
+        print("Error: OPENAI_API_KEY environment variable not set")
+        return
     
     # quietモードの設定
     quiet_mode = args.quiet
@@ -848,6 +847,8 @@ async def main():
         
         os.makedirs(output_dir, exist_ok=True)
         args.output = os.path.join(output_dir, f"{base_name}_llm_eval.json")
+    else:
+        os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     
     # 結果を保存する辞書（階層構造: task_type -> metric -> scores）
     results = {}

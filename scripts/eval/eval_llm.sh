@@ -39,4 +39,5 @@ if [[ "${DRY_RUN:-0}" == "1" ]]; then
   exit 0
 fi
 
+mkdir -p "$(dirname "${OUTPUT_FILE}")"
 "${CMD[@]}"

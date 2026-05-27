@@ -68,6 +68,8 @@ Supplemental NLP overlap metrics:
 
 ```bash
 TASK=mo3d scripts/eval/eval_nlp.sh outputs/mo3d_eval/inference.json
+TASK=shape_mating ANNO_PATH=data/shape_mating/test.json scripts/eval/eval_nlp.sh outputs/shape_mating_eval/inference.json
+TASK=change_captioning scripts/eval/eval_nlp.sh outputs/change_captioning_eval_subset/inference.json
 ```
 
 ModelNet40 CLIP classification:

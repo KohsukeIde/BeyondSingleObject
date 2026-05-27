@@ -158,7 +158,13 @@ checkpoints/
 `multi-3dllm` is used for MO3D, Shape Mating, and Change Captioning.
 `multi-3dllm-classification` is used for ModelNet40 classification.
 `pointllm-stage1` is the PointLLM stage-1 checkpoint used only when running
-joint fine-tuning.
+joint fine-tuning. To re-run joint fine-tuning, place a compatible PointLLM
+initialization checkpoint there, for example:
+
+```bash
+huggingface-cli download RunsenXu/PointLLM_7B_v1.1_init \
+  --local-dir checkpoints/pointllm-stage1
+```
 
 </details>
 
@@ -287,7 +293,7 @@ Supplemental text-overlap metrics:
 
 ```bash
 TASK=mo3d scripts/eval/eval_nlp.sh outputs/mo3d_eval/inference.json
-TASK=shape_mating scripts/eval/eval_nlp.sh outputs/shape_mating_eval/inference.json
+TASK=shape_mating ANNO_PATH=data/shape_mating/test.json scripts/eval/eval_nlp.sh outputs/shape_mating_eval/inference.json
 TASK=change_captioning scripts/eval/eval_nlp.sh outputs/change_captioning_eval_subset/inference.json
 ```
 
