@@ -62,7 +62,7 @@
     }
   ],
   "links": {
-    "paper": "#",
+    "paper": "https://openaccess.thecvf.com/content/CVPR2026F/papers/Ide_Beyond_Single_Object_Learning_3D_Relations_with_Large_Language_Models_CVPRF_2026_paper.pdf",
     "arxiv": "#",
     "code": "https://github.com/KohsukeIde/BeyondSingleObject",
     "models": "https://huggingface.co/idekoh/Multi-3DLLM",
