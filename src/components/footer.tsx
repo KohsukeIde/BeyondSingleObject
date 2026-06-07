@@ -8,9 +8,15 @@ export function Footer() {
     <footer className="w-full border-t bg-footer-background/70 py-6 md:py-10 flex flex-col items-center">
       <div className="container mx-auto flex flex-col items-center gap-6 px-6 xl:max-w-4xl">
         <div className="flex flex-wrap justify-center gap-3">
-          <Button variant="ghost" size="sm" disabled>
-            <FileText className="mr-2 h-4 w-4" />
-            Paper (TBA)
+          <Button variant="ghost" size="sm" asChild>
+            <a
+              href="https://openaccess.thecvf.com/content/CVPR2026F/papers/Ide_Beyond_Single_Object_Learning_3D_Relations_with_Large_Language_Models_CVPRF_2026_paper.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Paper
+            </a>
           </Button>
           <Button variant="ghost" size="sm" asChild>
             <a

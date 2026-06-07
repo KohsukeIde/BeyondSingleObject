@@ -185,9 +185,15 @@ function Home() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3 px-2">
-              <Button variant="outline" disabled>
-                <FileText className="mr-2 h-4 w-4" />
-                Paper (TBA)
+              <Button variant="outline" asChild>
+                <a
+                  href={projectData.links.paper}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  Paper
+                </a>
               </Button>
               <Button variant="outline" asChild>
                 <a
