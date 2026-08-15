@@ -274,7 +274,6 @@ def train():
             reinit_relation_env = os.getenv("POINTLLM_REINIT_RELATION", "1").strip().lower()
             reinit_relation = reinit_relation_env not in {"0", "false", "no", "off"}
             if hasattr(model.get_model(), 'relation_module') and model.get_model().relation_module is not None and not resuming and reinit_relation:
-                import torch.nn as nn
                 core_model = model.get_model()
                 relation_module = core_model.relation_module
                 use_adaln = bool(getattr(relation_module, "use_adaln", False))
@@ -283,37 +282,8 @@ def train():
                 if encoder is not None and hasattr(encoder, "layers") and len(encoder.layers) > 0:
                     prenorm = bool(getattr(encoder.layers[0], "prenorm", False))
                 logger.info(f"[TRAIN] Re-initializing Relation Module after checkpoint load... (use_adaln={use_adaln}, prenorm={prenorm})")
-                
-                for name, param in relation_module.named_parameters():
-                    # AdaLN のモジュレータは常に 0 で OK（ゲート=0, Δ=0 で立ち上げ）
-                    if 'encoder.modulator.1.weight' in name or 'encoder.modulator.1.bias' in name:
-                        nn.init.zeros_(param)
-                        logger.info(f"  Preserved zero init for {name}")
-                        continue
-                    
-                    # LayerNorm は常に (γ=1, β=0)
-                    # norm_1, norm_2, adaln_msa.norm, adaln_ffn.norm すべてをカバー
-                    if 'norm' in name and not ('linear' in name or 'mhsa' in name):
-                        if name.endswith('.weight'):
-                            nn.init.ones_(param)
-                            logger.info(f"  Re-initialized {name} to ones")
-                        elif name.endswith('.bias'):
-                            nn.init.zeros_(param)
-                            logger.info(f"  Re-initialized {name} to zeros")
-                        continue
-                    
-                    # AdaLN の有無で分岐：無し→恒等（全 Linear を完全 0-init）、有り→通常初期化
-                    if not use_adaln:
-                        # すべての Linear（QKV, O, FFN）を 0-init（prenorm に関係なく）
-                        nn.init.zeros_(param)
-                        logger.info(f"  Re-initialized {name} to zeros (non-AdaLN identity init)")
-                    else:
-                        if name.endswith('.weight'):
-                            nn.init.normal_(param, mean=0.0, std=0.015)
-                            logger.info(f"  Re-initialized {name} with normal std=0.015")
-                        elif name.endswith('.bias'):
-                            nn.init.zeros_(param)
-                            logger.info(f"  Re-initialized {name} to zeros")
+                relation_module.reset_parameters_for_training()
+                logger.info("[TRAIN] Relation Module initialized with trainable identity residual branches.")
                 
                 # ★★★ ユニットテスト (A): AdaLN なし＝恒等の確認 ★★★
                 if not use_adaln:

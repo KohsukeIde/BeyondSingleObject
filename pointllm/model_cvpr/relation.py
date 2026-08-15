@@ -32,7 +32,8 @@ def compute_mhsa(q, k, v, scale_factor=1, mask=None):
             q,
             k,
             v,
-            attn_mask=attn_mask,
+            # This module uses True=masked; SDPA boolean masks use True=allowed.
+            attn_mask=None if attn_mask is None else ~attn_mask,
             dropout_p=0.0,
             is_causal=False,
         )
@@ -216,12 +217,31 @@ class TransformerEncoder(nn.Module):
         self._debug_gate_stats = False
         self._debug_gate_every = 1
         self._debug_gate_step = 0
-        init_fn = weight_init if self.use_adaln else weight_init_identity
-        self.apply(init_fn)
+        self.reset_parameters_for_training()
+
+    def reset_parameters_for_training(self) -> None:
+        """Initialize an identity residual block without killing its gradients."""
+        self.apply(weight_init)
+
         if self.use_adaln:
-            # IMPORTANT: weight_init above randomizes Linear layers, so reapply zero init afterwards.
+            # AdaLN-Zero starts with closed residual gates. The transformer
+            # weights become trainable as soon as the gates move away from zero.
             nn.init.zeros_(self.modulator[1].weight)
             nn.init.zeros_(self.modulator[1].bias)
+            return
+
+        # Keep QKV and the FFN input projection normally initialized. Zero only
+        # each residual branch's output projection. This is exactly identity at
+        # initialization while preserving a staged gradient path.
+        for layer in self.layers:
+            nn.init.zeros_(layer.mhsa.W_0.weight)
+            if layer.mhsa.W_0.bias is not None:
+                nn.init.zeros_(layer.mhsa.W_0.bias)
+
+            ffn_output = layer.linear[3]
+            nn.init.zeros_(ffn_output.weight)
+            if ffn_output.bias is not None:
+                nn.init.zeros_(ffn_output.bias)
 
     def forward(self, x, mask=None, cond: Optional[torch.Tensor] = None):
         # ★★★ DEBUG: TransformerEncoderでの受け取り確認 ★★★
@@ -335,16 +355,6 @@ def weight_init(m):
         nn.init.zeros_(m.bias)   # beta = 0
 
 
-def weight_init_identity(m):
-    if isinstance(m, nn.Linear):
-        nn.init.zeros_(m.weight)
-        if m.bias is not None:
-            nn.init.zeros_(m.bias)
-    elif isinstance(m, nn.LayerNorm):
-        nn.init.ones_(m.weight)
-        nn.init.zeros_(m.bias)
-
-
 class SimpleRelationModule(nn.Module):
     """Chat-3D style Transformer encoder over token sets (copied behavior)."""
 
@@ -375,6 +385,9 @@ class SimpleRelationModule(nn.Module):
             self.debug_gate_every = 1
         self.encoder._debug_gate_stats = self.debug_gate_stats
         self.encoder._debug_gate_every = self.debug_gate_every
+
+    def reset_parameters_for_training(self) -> None:
+        self.encoder.reset_parameters_for_training()
 
     def forward(self, tokens: torch.Tensor, key_padding_mask: Optional[torch.Tensor] = None, cond: Optional[torch.Tensor] = None) -> torch.Tensor:
         # Accept (B, T) mask -> build (B,1,T,T) boolean mask where True=masked

@@ -766,6 +766,11 @@ class PointLLMCVPRLlamaForCausalLM(LlamaForCausalLM):
         self.model = PointLLMCVPRLlamaModel(config)
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
         self.post_init()
+        if self.model.relation_module is not None:
+            # post_init() initializes every Linear recursively. Restore PIT's
+            # identity-preserving residual initialization for direct model
+            # construction; from_pretrained() overwrites it with checkpoint data.
+            self.model.relation_module.reset_parameters_for_training()
 
     def get_model(self):
         return self.model
