@@ -248,7 +248,7 @@ MAX_DELTA_OUTPUT_CLAUSES=6 \
 scripts/eval/infer.sh
 ```
 
-The released `data/change_captioning/eval_subset.json` contains a fixed
+The released `data/change_captioning/eval_subset.json` contains a curated
 200-sample LLM-evaluation subset with balanced verification and delta-caption
 examples.
 
