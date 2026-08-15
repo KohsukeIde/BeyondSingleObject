@@ -186,16 +186,19 @@ OUTPUT_DIR=outputs/joint \
 scripts/train/train_joint.sh
 ```
 
-The default mixture uses PointLLM caption/instruction data together with MO3D,
-Shape Mating, and Change Captioning. To inspect the expanded command without
-launching training:
+The default recipe jointly fine-tunes MO3D, Shape Mating, and Change Captioning
+for three epochs with mixture probabilities `0.333/0.333/0.334`. On eight GPUs,
+gradient accumulation preserves the effective batch size of the 32-GPU release
+run. To inspect the expanded command without launching training:
 
 ```bash
 DRY_RUN=1 scripts/train/train_joint.sh
 ```
 
 For multi-node training, set `NNODES`, `GPUS_PER_NODE`, `NODE_RANK`, and
-`MASTER_ADDR` before running the same script.
+`MASTER_ADDR` before running the same script. The automatic accumulation rule
+supports world sizes that divide 32; otherwise set
+`GRADIENT_ACCUMULATION_STEPS` explicitly.
 
 </details>
 
