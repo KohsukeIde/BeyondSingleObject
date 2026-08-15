@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import torch
 
 from pointllm.model_cvpr.relation import SimpleRelationModule
@@ -78,6 +80,8 @@ def test_non_adaln_reinitialization_restores_trainable_identity():
     assert torch.count_nonzero(layer.linear[0].weight) > 0
     assert torch.count_nonzero(layer.mhsa.W_0.weight) == 0
     assert torch.count_nonzero(layer.linear[3].weight) == 0
+    assert layer.mhsa.W_0._pit_zero_output is True
+    assert layer.linear[3]._pit_zero_output is True
 
 
 def test_adaln_zero_initialization_becomes_condition_dependent():
@@ -128,3 +132,36 @@ def test_attention_mask_uses_true_for_masked_positions():
 
     output = compute_mhsa(q, k, v, mask=mask)
     torch.testing.assert_close(output, torch.tensor([[[[2.0]]]]))
+
+
+def test_attention_fallback_zeroes_fully_masked_rows(monkeypatch):
+    from pointllm.model_cvpr.relation import compute_mhsa
+
+    def fail_sdpa(*args, **kwargs):
+        raise RuntimeError("force fallback")
+
+    monkeypatch.setattr(
+        torch.nn.functional, "scaled_dot_product_attention", fail_sdpa
+    )
+    q = torch.tensor([[[[1.0]]]])
+    k = torch.tensor([[[[1.0], [1.0]]]])
+    v = torch.tensor([[[[2.0], [100.0]]]])
+    mask = torch.tensor([[[[True, True]]]])
+
+    output = compute_mhsa(q, k, v, mask=mask)
+    torch.testing.assert_close(output, torch.zeros_like(output))
+
+
+def test_huggingface_missing_key_initialization_preserves_identity_marker():
+    from pointllm.model_cvpr.pointllm_cvpr import PointLLMCVPRLlamaForCausalLM
+
+    model = PointLLMCVPRLlamaForCausalLM.__new__(PointLLMCVPRLlamaForCausalLM)
+    torch.nn.Module.__init__(model)
+    model.config = SimpleNamespace(initializer_range=0.02)
+
+    output_projection = torch.nn.Linear(4, 4)
+    output_projection._pit_zero_output = True
+    model._init_weights(output_projection)
+
+    assert torch.count_nonzero(output_projection.weight) == 0
+    assert torch.count_nonzero(output_projection.bias) == 0

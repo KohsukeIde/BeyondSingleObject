@@ -6,7 +6,7 @@ from torch import nn
 from typing import List, Optional
 
 
-def _prepare_attn_mask(mask: Optional[torch.Tensor], heads: int) -> Optional[torch.Tensor]:
+def _prepare_attn_mask(mask: Optional[torch.Tensor]) -> Optional[torch.Tensor]:
     if mask is None:
         return None
 
@@ -16,14 +16,11 @@ def _prepare_attn_mask(mask: Optional[torch.Tensor], heads: int) -> Optional[tor
     if mask.dim() == 3:
         mask = mask.unsqueeze(1)  # (B,1,T,T)
 
-    if mask.size(1) == 1 and heads > 1:
-        mask = mask.expand(-1, heads, -1, -1)
-
     return mask
 
 
 def compute_mhsa(q, k, v, scale_factor=1, mask=None):
-    attn_mask = _prepare_attn_mask(mask, q.size(1))
+    attn_mask = _prepare_attn_mask(mask)
     if attn_mask is not None:
         attn_mask = attn_mask.to(device=q.device, dtype=torch.bool)
 
@@ -44,10 +41,10 @@ def compute_mhsa(q, k, v, scale_factor=1, mask=None):
         scaled_dot_prod = torch.einsum('... i d , ... j d -> ... i j', q, k) * scale_factor
 
         if attn_mask is not None:
-            neg_inf = -torch.finfo(scaled_dot_prod.dtype).max
-            scaled_dot_prod = scaled_dot_prod.masked_fill(attn_mask, neg_inf)
+            scaled_dot_prod = scaled_dot_prod.masked_fill(attn_mask, float("-inf"))
 
         attention = torch.softmax(scaled_dot_prod, dim=-1)
+        attention = torch.nan_to_num(attention, nan=0.0, posinf=0.0, neginf=0.0)
         out = torch.einsum('... i j , ... j d -> ... i d', attention, v)
         return out
 
@@ -234,11 +231,13 @@ class TransformerEncoder(nn.Module):
         # each residual branch's output projection. This is exactly identity at
         # initialization while preserving a staged gradient path.
         for layer in self.layers:
+            layer.mhsa.W_0._pit_zero_output = True
             nn.init.zeros_(layer.mhsa.W_0.weight)
             if layer.mhsa.W_0.bias is not None:
                 nn.init.zeros_(layer.mhsa.W_0.bias)
 
             ffn_output = layer.linear[3]
+            ffn_output._pit_zero_output = True
             nn.init.zeros_(ffn_output.weight)
             if ffn_output.bias is not None:
                 nn.init.zeros_(ffn_output.bias)

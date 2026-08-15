@@ -761,6 +761,13 @@ class PointLLMCVPRLlamaModel(PointLLMLlamaModel):
 class PointLLMCVPRLlamaForCausalLM(LlamaForCausalLM):
     config_class = PointLLMCVPRConfig
 
+    def _init_weights(self, module):
+        super()._init_weights(module)
+        if getattr(module, "_pit_zero_output", False):
+            nn.init.zeros_(module.weight)
+            if module.bias is not None:
+                nn.init.zeros_(module.bias)
+
     def __init__(self, config: LlamaConfig):
         super(LlamaForCausalLM, self).__init__(config)
         self.model = PointLLMCVPRLlamaModel(config)
