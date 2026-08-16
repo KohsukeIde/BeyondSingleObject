@@ -41,6 +41,26 @@ scripts/eval/eval_nlp.sh
 scripts/eval/eval_modelnet.sh
 ```
 
+## 📈 Release Checkpoint
+
+Following acceptance, we further cleaned the released annotations, made the
+MO3D train/test split object-disjoint, refined the Patch-Interaction Transformer
+initialization, and retrained the public checkpoint with the documented joint
+recipe.
+
+| Task | Metric | CVPR paper | Current release |
+| --- | --- | ---: | ---: |
+| MO3D holistic QA | Binary accuracy `B` | 81.7% | **84.0%** (42/50) |
+| Shape Mating | Selection accuracy `S` | 37.1% | **73.0%** (146/200) |
+| Change Captioning verify | Binary accuracy `B` | 51.2% | **67.0%** (67/100) |
+
+The current values are deterministic regression results on compact, balanced
+public subsets. The CVPR values are included as reference and follow the paper's
+submitted evaluation protocol, so this is not a controlled re-evaluation of the
+paper table. Judge-dependent `R` and `M` values are not reported for the current
+checkpoint; use the released LLM evaluators to recompute them with a recorded
+judge model and date.
+
 ## 🚀 Getting Started
 
 <details>
