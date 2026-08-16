@@ -46,11 +46,11 @@ scripts/eval/eval_modelnet.sh
 Our latest checkpoint and cleaned datasets further improve multi-object 3D
 reasoning performance.
 
-| Task | Metric | CVPR paper | Current release |
-| --- | --- | ---: | ---: |
-| MO3D holistic QA | Binary accuracy `B` | 81.7% | **84.0%** (42/50) |
-| Shape Mating | Selection accuracy `S` | 37.1% | **73.0%** (146/200) |
-| Change Captioning verify | Binary accuracy `B` | 51.2% | **67.0%** (67/100) |
+| Task | Metric | Current release |
+| --- | --- | ---: |
+| MO3D holistic QA | Binary accuracy `B` | **84.0%** (42/50) |
+| Shape Mating | Selection accuracy `S` | **73.0%** (146/200) |
+| Change Captioning verify | Binary accuracy `B` | **67.0%** (67/100) |
 
 ## 🚀 Getting Started
 
